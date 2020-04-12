@@ -76,6 +76,6 @@ for line in fh:
     conn.commit()
     if count % 10 == 0 :
         print('Pausing for a bit...')
-        time.sleep(5)
+        time.sleep(2)
 
 print("Run geodump.py to read the data from the database so you can vizualize it on a map.")
