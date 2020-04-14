@@ -82,10 +82,11 @@ for line in fh:
             VALUES ( ?, ? )''', (memoryview(cim.encode()), memoryview(data.encode()) ) ) #cím és google lekérdezés eredményét elmentjük az adatbázisba 
     print(js['results'][0]['formatted_address'])
     conn.commit()
+    print(type(data))
 print(count,'different locations found.')     
 print("Run geodump.py to read the data from the database so you can vizualize it on a map.")
 print(type(js))
-print(type(cim))
+
 
 
 
