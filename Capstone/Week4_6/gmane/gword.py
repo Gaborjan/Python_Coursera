@@ -3,6 +3,10 @@ import time
 import zlib
 import string
 
+HOW_MANY_WORDS=100
+BIG_SIZE=80
+SMALL_SIZE=20
+
 conn = sqlite3.connect('index.sqlite')
 cur = conn.cursor()
 
@@ -15,11 +19,11 @@ for message_row in cur :
 cur.execute('SELECT subject_id FROM Messages')
 counts = dict()
 for message_row in cur :
-    text = subjects[message_row[0]]
-    text = text.translate(str.maketrans('','',string.punctuation))
-    text = text.translate(str.maketrans('','','1234567890'))
-    text = text.strip()
-    text = text.lower()
+    text = subjects[message_row[0]] # a soron következő üzenet tárgya
+    text = text.translate(str.maketrans('','',string.punctuation)) #elválasztó karakterek törlése
+    text = text.translate(str.maketrans('','','1234567890')) #számok törlése
+    text = text.strip() #bevezető és követő szóközök törlése
+    text = text.lower() 
     words = text.split()
     for word in words:
         if len(word) < 4 : continue
@@ -28,7 +32,7 @@ for message_row in cur :
 x = sorted(counts, key=counts.get, reverse=True)
 highest = None
 lowest = None
-for k in x[:100]:
+for k in x[:HOW_MANY_WORDS]:
     if highest is None or highest < counts[k] :
         highest = counts[k]
     if lowest is None or lowest > counts[k] :
@@ -36,18 +40,15 @@ for k in x[:100]:
 print('Range of counts:',highest,lowest)
 
 # Spread the font sizes across 20-100 based on the count
-bigsize = 80
-smallsize = 20
-
 fhand = open('gword.js','w')
 fhand.write("gword = [")
 first = True
-for k in x[:100]:
+for k in x[:HOW_MANY_WORDS]:
     if not first : fhand.write( ",\n")
     first = False
     size = counts[k]
     size = (size - lowest) / float(highest - lowest)
-    size = int((size * bigsize) + smallsize)
+    size = int((size * BIG_SIZE) + SMALL_SIZE)
     fhand.write("{text: '"+k+"', size: "+str(size)+"}")
 fhand.write( "\n];\n")
 fhand.close()
